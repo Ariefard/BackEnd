@@ -1,7 +1,8 @@
 var express = require('express');
 var app = express();
 var bodyPanser = require('body-parser');
-
+var cors = require('cors');
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -23,10 +24,8 @@ app.get('/', function(req, res) {
     res.send(
         `<html>
         <body>
-         <form action = "/todo" method="POST">
-             <input name="id">
-             <input name="Nama">
-             <input name="alamat">
+         <form action = "/todo" method="POST" name>
+             <input name="desk">
              <button>add</button>
          </form> 
          </body>  
@@ -35,8 +34,8 @@ app.get('/', function(req, res) {
 });
 
 app.get('/todo', function(req, res) {
-    con.query('SELECT * FROM pengunjung', (err, rows, field) => {
-        if (err) {
+    con.query('SELECT * FROM todo', (err, rows, field) => {
+        if (!err) {
             res.send(rows);
         } else {
             console.log(err);
@@ -45,14 +44,16 @@ app.get('/todo', function(req, res) {
 });
 
 app.post('/todo', function(req, res) {
-    var id = req.body.id;
-    var Nama = req.body.Nama;
-    var alamat = req.body.alamat;
-    var sql = "INSERT INTO pengunjung (ID,Nama,alamat) VALUES ('" + id + "','" + Nama + "','" + alamat + "')";
+    var Desk = req.body.desk;
+    var sql = "INSERT INTO todo (Desk) VALUES ('" + Desk + "')";
     con.query(sql, function(err) {
         if (err) throw err;
     })
     res.end();
 });
 
+app.delete('/todo/:id', (req, res) => {
+    con.query("DELETE FROM data WHERE id='" + req.params.id + "'");
+    res.end();
+})
 app.listen(3000);
